@@ -1,213 +1,167 @@
-# 🕸️ Neural Network Framework
+# Neural Network Framework
 
-> Professional project by Gabriel Demetrios Lafis
+<div align="center">
 
-[![HTML5](https://img.shields.io/badge/HTML5-5-E34F26.svg)](https://img.shields.io/badge/)
-[![Flask](https://img.shields.io/badge/Flask-3.0-000000.svg)](https://img.shields.io/badge/)
-[![NumPy](https://img.shields.io/badge/NumPy-1.26-013243.svg)](https://img.shields.io/badge/)
-[![Pandas](https://img.shields.io/badge/Pandas-2.2-150458.svg)](https://img.shields.io/badge/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white)
 
-[English](#english) | [Português](#português)
+</div>
+
+**[English](#english)** | **[Portugues (BR)](#portugues-br)**
 
 ---
 
 ## English
 
-### 🎯 Overview
+### Overview
 
-**Neural Network Framework** is a production-grade HTML application complemented by CSS, JavaScript, Python, R that showcases modern software engineering practices including clean architecture, comprehensive testing, containerized deployment, and CI/CD readiness.
+A neural network framework built entirely from scratch using only NumPy. Implements dense layers, multiple activation functions (ReLU, Sigmoid, Softmax, Tanh), loss functions (MSE, Cross-Entropy), and optimizers (SGD with momentum, Adam). Includes a sequential model API, training loop with mini-batch support, and XOR learning demonstration.
 
-The codebase comprises **1,008 lines** of source code organized across **6 modules**, following industry best practices for maintainability, scalability, and code quality.
-
-### ✨ Key Features
-
-- **📐 Clean Architecture**: Modular design with clear separation of concerns
-- **🧪 Test Coverage**: Unit and integration tests for reliability
-- **📚 Documentation**: Comprehensive inline documentation and examples
-- **🔧 Configuration**: Environment-based configuration management
-
-### 🏗️ Architecture
+### Architecture
 
 ```mermaid
-graph TB
-    subgraph Client["🖥️ Client Layer"]
-        A[Web Client]
-        B[API Documentation]
-    end
-    
-    subgraph API["⚡ API Layer"]
-        C[Middleware Pipeline]
-        D[Route Handlers]
-        E[Business Logic]
-    end
-    
-    subgraph Data["💾 Data Layer"]
-        F[(Primary Database)]
-        G[Cache]
-    end
-    
-    A --> C
-    B --> C
-    C --> D --> E
-    E --> F
-    E --> G
-    
-    style Client fill:#e1f5fe
-    style API fill:#f3e5f5
-    style Data fill:#fff3e0
+graph TD
+    A[Input Data] --> B[Dense Layer]
+    B --> C[Activation Function]
+    C --> D[Dense Layer]
+    D --> E[Activation Function]
+    E --> F[Output Layer]
+    F --> G[Loss Function]
+    G --> H{Backpropagation}
+    H --> I[Compute Gradients]
+    I --> J[Optimizer Update]
+    J --> B
 ```
 
-### 🚀 Quick Start
+### Training Loop
 
-#### Prerequisites
-
-#### Installation
-
-```bash
-git clone https://github.com/galafis/Neural-Network-Framework.git
-cd Neural-Network-Framework
+```mermaid
+flowchart LR
+    subgraph Forward Pass
+        A[Input] --> B[Layer 1: Dense + ReLU]
+        B --> C[Layer 2: Dense + Sigmoid]
+        C --> D[Predictions]
+    end
+    subgraph Loss Computation
+        D --> E[Loss Function]
+        E --> F[Loss Value]
+    end
+    subgraph Backward Pass
+        F --> G[dLoss/dOutput]
+        G --> H[Layer 2 Gradients]
+        H --> I[Layer 1 Gradients]
+    end
+    subgraph Parameter Update
+        I --> J[SGD / Adam]
+        J --> K[Updated Weights]
+    end
 ```
 
-### 📁 Project Structure
+### Features
+
+- **Dense Layers**: Fully connected layers with He weight initialization
+- **Activations**: ReLU, Sigmoid, Tanh, Softmax
+- **Loss Functions**: MSE, Categorical Cross-Entropy, Binary Cross-Entropy
+- **Optimizers**: SGD (with momentum), Adam
+- **Sequential API**: Easy model building with `.add()` and `.compile()`
+- **Training**: Mini-batch gradient descent with validation support
+- **XOR Demo**: Demonstrates learning non-linear functions
+
+### Project Structure
 
 ```
 Neural-Network-Framework/
-├── LICENSE
-├── README.md
-├── analytics.R
-├── app.js
-├── app.py
-└── requirements.txt
+├── src/
+│   ├── __init__.py
+│   ├── layers.py          # Dense layer with forward/backward
+│   ├── activations.py     # ReLU, Sigmoid, Tanh, Softmax
+│   ├── losses.py          # MSE, CrossEntropy, BCE
+│   ├── optimizers.py      # SGD, Adam
+│   └── network.py         # Sequential model and training
+├── tests/
+│   └── test_neural_network.py
+├── requirements.txt
+└── README.md
 ```
 
-### 🛠️ Tech Stack
+### Usage
 
-| Technology | Description | Role |
-|------------|-------------|------|
-| **HTML** | Core Language | Primary |
-| **Flask** | Lightweight web framework | Framework |
-| **NumPy** | Numerical computing | Framework |
-| **Pandas** | Data manipulation library | Framework |
-| R | 1 files | Supporting |
-| JavaScript | 1 files | Supporting |
-| Python | 1 files | Supporting |
-| CSS | 1 files | Supporting |
+```python
+from src.network import Sequential
+from src.layers import Dense
+from src.activations import ReLU, Sigmoid
+import numpy as np
 
-### 🤝 Contributing
+# XOR problem
+X = np.array([[0,0],[0,1],[1,0],[1,1]], dtype=float)
+y = np.array([[0],[1],[1],[0]], dtype=float)
 
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+model = Sequential()
+model.add(Dense(2, 8, seed=42))
+model.add(ReLU())
+model.add(Dense(8, 1, seed=43))
+model.add(Sigmoid())
+model.compile(optimizer="adam", loss="mse", learning_rate=0.05)
 
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+model.fit(X, y, epochs=500, verbose=True)
+print(model.predict(X))
+print(model.summary())
+```
 
-### 📄 License
+### Running Tests
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```bash
+pytest tests/ -v
+```
 
-### 👤 Author
+### Author
 
 **Gabriel Demetrios Lafis**
-- GitHub: [@galafis](https://github.com/galafis)
-- LinkedIn: [Gabriel Demetrios Lafis](https://linkedin.com/in/gabriel-demetrios-lafis)
+- [GitHub](https://github.com/galafis)
+- [LinkedIn](https://www.linkedin.com/in/gabriel-demetrios-lafis-62197711b)
 
 ---
 
-## Português
+## Portugues BR
 
-### 🎯 Visão Geral
+### Visao Geral
 
-**Neural Network Framework** é uma aplicação HTML de nível profissional, complementada por CSS, JavaScript, Python, R que demonstra práticas modernas de engenharia de software, incluindo arquitetura limpa, testes abrangentes, implantação containerizada e prontidão para CI/CD.
+Um framework de redes neurais construido inteiramente do zero usando apenas NumPy. Implementa camadas densas, multiplas funcoes de ativacao (ReLU, Sigmoid, Softmax, Tanh), funcoes de perda (MSE, Cross-Entropy) e otimizadores (SGD com momentum, Adam). Inclui API sequencial, loop de treinamento com mini-batch e demonstracao de aprendizado XOR.
 
-A base de código compreende **1,008 linhas** de código-fonte organizadas em **6 módulos**, seguindo as melhores práticas do setor para manutenibilidade, escalabilidade e qualidade de código.
-
-### ✨ Funcionalidades Principais
-
-- **📐 Clean Architecture**: Modular design with clear separation of concerns
-- **🧪 Test Coverage**: Unit and integration tests for reliability
-- **📚 Documentation**: Comprehensive inline documentation and examples
-- **🔧 Configuration**: Environment-based configuration management
-
-### 🏗️ Arquitetura
+### Arquitetura
 
 ```mermaid
-graph TB
-    subgraph Client["🖥️ Client Layer"]
-        A[Web Client]
-        B[API Documentation]
-    end
-    
-    subgraph API["⚡ API Layer"]
-        C[Middleware Pipeline]
-        D[Route Handlers]
-        E[Business Logic]
-    end
-    
-    subgraph Data["💾 Data Layer"]
-        F[(Primary Database)]
-        G[Cache]
-    end
-    
-    A --> C
-    B --> C
-    C --> D --> E
-    E --> F
-    E --> G
-    
-    style Client fill:#e1f5fe
-    style API fill:#f3e5f5
-    style Data fill:#fff3e0
+graph TD
+    A[Dados de Entrada] --> B[Camada Densa]
+    B --> C[Funcao de Ativacao]
+    C --> D[Camada Densa]
+    D --> E[Funcao de Ativacao]
+    E --> F[Camada de Saida]
+    F --> G[Funcao de Perda]
+    G --> H{Retropropagacao}
+    H --> I[Calcular Gradientes]
+    I --> J[Atualizar Otimizador]
+    J --> B
 ```
 
-### 🚀 Início Rápido
+### Funcionalidades
 
-#### Prerequisites
+- **Camadas Densas**: Camadas totalmente conectadas com inicializacao He
+- **Ativacoes**: ReLU, Sigmoid, Tanh, Softmax
+- **Funcoes de Perda**: MSE, Cross-Entropy Categorica, Cross-Entropy Binaria
+- **Otimizadores**: SGD (com momentum), Adam
+- **API Sequencial**: Construcao facil com `.add()` e `.compile()`
+- **Treinamento**: Gradiente descendente mini-batch com validacao
+- **Demo XOR**: Demonstra aprendizado de funcoes nao-lineares
 
-#### Installation
+### Executando os Testes
 
 ```bash
-git clone https://github.com/galafis/Neural-Network-Framework.git
-cd Neural-Network-Framework
+pytest tests/ -v
 ```
 
-### 📁 Estrutura do Projeto
+---
 
-```
-Neural-Network-Framework/
-├── LICENSE
-├── README.md
-├── analytics.R
-├── app.js
-├── app.py
-└── requirements.txt
-```
+## License
 
-### 🛠️ Stack Tecnológica
-
-| Tecnologia | Descrição | Papel |
-|------------|-----------|-------|
-| **HTML** | Core Language | Primary |
-| **Flask** | Lightweight web framework | Framework |
-| **NumPy** | Numerical computing | Framework |
-| **Pandas** | Data manipulation library | Framework |
-| R | 1 files | Supporting |
-| JavaScript | 1 files | Supporting |
-| Python | 1 files | Supporting |
-| CSS | 1 files | Supporting |
-
-### 🤝 Contribuindo
-
-Contribuições são bem-vindas! Sinta-se à vontade para enviar um Pull Request.
-
-### 📄 Licença
-
-Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.
-
-### 👤 Autor
-
-**Gabriel Demetrios Lafis**
-- GitHub: [@galafis](https://github.com/galafis)
-- LinkedIn: [Gabriel Demetrios Lafis](https://linkedin.com/in/gabriel-demetrios-lafis)
+MIT License - see [LICENSE](LICENSE) for details.
